@@ -5,14 +5,18 @@ import java.sql.Date;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Entity
 public class WeekendData implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
+	@Id
+	//private String movieId;
+	//private Long weekendStart;
 	private WeekendDataKey wkndDataKey;
+	private Long weekendStart;
 	private Long weekendEnd;
 	private String weekendRank;
 	private String weekendGross;
@@ -20,21 +24,36 @@ public class WeekendData implements Serializable {
 	private String numTheatersForWeekend;
 	private String percentChangeInTheatersFromPrevWknd;
 	private String perTheaterAvgForWknd;
-	private String grossToDate;
+	
 	private String weeksInRelease;
 	
 	public WeekendData() {
-		this.wkndDataKey = new WeekendDataKey();
-		//this.weekendStart = weekendStart;
-		//this.weekendEnd = weekendEnd;
+		//this.movieId = "";
 		this.weekendRank = "";
 		this.weekendGross = "";
 		this.percentChangeFromFromPrevWknd = "";
 		this.numTheatersForWeekend = "";
 		this.percentChangeInTheatersFromPrevWknd = "";
 		this.perTheaterAvgForWknd = "";
-		this.grossToDate = "";
 		this.weeksInRelease = "";
+	}
+
+	public WeekendData(WeekendDataKey wkndDataKey, Long weekendStart,
+			Long weekendEnd, String weekendRank, String weekendGross,
+			String percentChangeFromFromPrevWknd, String numTheatersForWeekend,
+			String percentChangeInTheatersFromPrevWknd,
+			String perTheaterAvgForWknd, String weeksInRelease) {
+		super();
+		this.wkndDataKey = wkndDataKey;
+		this.weekendStart = weekendStart;
+		this.weekendEnd = weekendEnd;
+		this.weekendRank = weekendRank;
+		this.weekendGross = weekendGross;
+		this.percentChangeFromFromPrevWknd = percentChangeFromFromPrevWknd;
+		this.numTheatersForWeekend = numTheatersForWeekend;
+		this.percentChangeInTheatersFromPrevWknd = percentChangeInTheatersFromPrevWknd;
+		this.perTheaterAvgForWknd = perTheaterAvgForWknd;
+		this.weeksInRelease = weeksInRelease;
 	}
 
 	public WeekendDataKey getWkndDataKey() {
@@ -43,6 +62,14 @@ public class WeekendData implements Serializable {
 
 	public void setWkndDataKey(WeekendDataKey wkndDataKey) {
 		this.wkndDataKey = wkndDataKey;
+	}
+
+	public Long getWeekendStart() {
+		return weekendStart;
+	}
+
+	public void setWeekendStart(Long weekendStart) {
+		this.weekendStart = weekendStart;
 	}
 
 	public Long getWeekendEnd() {
@@ -103,14 +130,6 @@ public class WeekendData implements Serializable {
 		this.perTheaterAvgForWknd = perTheaterAvgForWknd;
 	}
 
-	public String getGrossToDate() {
-		return grossToDate;
-	}
-
-	public void setGrossToDate(String grossToDate) {
-		this.grossToDate = grossToDate;
-	}
-
 	public String getWeeksInRelease() {
 		return weeksInRelease;
 	}
@@ -119,19 +138,22 @@ public class WeekendData implements Serializable {
 		this.weeksInRelease = weeksInRelease;
 	}
 
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	@Override
 	public String toString() {
-		return "WeekendData [wkndDataKey=" + wkndDataKey + ", weekendEnd="
-				+ weekendEnd + ", weekendRank=" + weekendRank
-				+ ", weekendGross=" + weekendGross
-				+ ", percentChangeFromFromPrevWknd="
+		return "WeekendData [wkndDataKey=" + wkndDataKey + ", weekendStart="
+				+ weekendStart + ", weekendEnd=" + weekendEnd
+				+ ", weekendRank=" + weekendRank + ", weekendGross="
+				+ weekendGross + ", percentChangeFromFromPrevWknd="
 				+ percentChangeFromFromPrevWknd + ", numTheatersForWeekend="
 				+ numTheatersForWeekend
 				+ ", percentChangeInTheatersFromPrevWknd="
 				+ percentChangeInTheatersFromPrevWknd
 				+ ", perTheaterAvgForWknd=" + perTheaterAvgForWknd
-				+ ", grossToDate=" + grossToDate + ", weeksInRelease="
-				+ weeksInRelease + "]";
+				+ ", weeksInRelease=" + weeksInRelease + "]";
 	}
 	
 }

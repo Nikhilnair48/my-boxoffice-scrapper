@@ -13,6 +13,8 @@ public class ForeignData implements Serializable {
 	
 	@EmbeddedId
 	private ForeignDataKey FDKey;
+	//private String foreignKeyMovieID;
+	//private String country;
 	//private String name;
 	private String distributor;
 	private Long release_date;
@@ -21,13 +23,24 @@ public class ForeignData implements Serializable {
 	private String total_gross;
 	
 	public ForeignData() {
-		FDKey = new ForeignDataKey();
-		//this.name = "";
+		super();
 		this.distributor = "";
-		//this.release_date = "";
-		//this.closing_date = "";
+		this.release_date = 0L;
+		this.closing_date = 0L;
 		this.opening_weekend = "";
 		this.total_gross = "";
+	}
+	
+	public ForeignData(ForeignDataKey fDKey, String distributor,
+			Long release_date, Long closing_date, String opening_weekend,
+			String total_gross) {
+		super();
+		FDKey = fDKey;
+		this.distributor = distributor;
+		this.release_date = release_date;
+		this.closing_date = closing_date;
+		this.opening_weekend = opening_weekend;
+		this.total_gross = total_gross;
 	}
 
 	public ForeignDataKey getFDKey() {
@@ -37,14 +50,6 @@ public class ForeignData implements Serializable {
 	public void setFDKey(ForeignDataKey fDKey) {
 		FDKey = fDKey;
 	}
-
-	/*public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}*/
 
 	public String getDistributor() {
 		return distributor;
@@ -89,12 +94,5 @@ public class ForeignData implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-
-	@Override
-	public String toString() {
-		return "ForeignData [FDKey=" + FDKey + ", distributor=" + distributor
-				+ ", release_date=" + release_date + ", closing_date="
-				+ closing_date + ", opening_weekend=" + opening_weekend
-				+ ", total_gross=" + total_gross + "]";
-	}
+		
 }

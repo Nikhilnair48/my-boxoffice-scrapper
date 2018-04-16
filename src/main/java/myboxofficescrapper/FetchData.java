@@ -13,13 +13,17 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 
 import util.Constants;
 import beans.DailyData;
 import beans.ForeignData;
-import beans.Movie;
 import beans.MovieSummary;
 import beans.WeekendData;
 import beans.WeeklyData;
@@ -43,8 +47,78 @@ public class FetchData {
 	private static ArrayList<WeekendData> wkndData = new ArrayList<>();
 	private static ArrayList<WeeklyData> wklyData = new ArrayList<>();
 	
-	public static void saveDataToDB() {
+	private static SessionFactory sessionFactory;
+	
+	public static void initHibernate() {
+		// A SessionFactory is set up once for an application!
+		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+				.configure("database/hibernate.cfg.xml") // configures settings from hibernate.cfg.xml
+				.build();
+		try {
+			sessionFactory = new MetadataSources( registry ).buildMetadata().buildSessionFactory();
+		}
 		
+		catch (Exception e) {
+			e.printStackTrace();
+			// The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
+			// so destroy it manually.
+			StandardServiceRegistryBuilder.destroy( registry );
+		}
+	}
+	
+	/*
+	 * saveDataToDB
+	 * 
+	 */
+	public static void saveDataToDB() throws Exception {
+		
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		if(movieSummary.size() > 0) {
+			for(MovieSummary sum : movieSummary) {
+				logger.info(movieSummary);
+				if(sum != null)
+					session.save(sum);
+			}
+		}
+		if(intlData.size() > 0) {
+			for(ForeignData intl : intlData) {
+				logger.info(intl);
+				if(intl != null && intl.getFDKey() != null)
+					session.save(intl);
+			}
+		}
+			
+		if(dailyData.size() > 0) {
+			for(DailyData daily : dailyData) {
+				logger.info(daily);
+				if(daily != null && daily.getDailyDataId() != null)
+					session.save(daily);
+			}
+		}
+		if(wkndData.size() > 0) {
+			for(WeekendData wknd: wkndData) {
+				logger.info(wknd);
+				if(wknd != null)
+					session.save(wknd);
+			}
+		}
+		if(wklyData.size() > 0) {
+			for(WeeklyData wkly: wklyData) {
+				logger.info(wkly);
+				if(wkly != null)
+					session.save(wkly);
+			}
+		}
+		session.getTransaction().commit();
+		session.close();
+		
+		// RESET FOR NEXT ITERATION
+		movieSummary = new ArrayList<>();
+		dailyData = new ArrayList<>();
+		intlData = new ArrayList<>();
+		wkndData = new ArrayList<>();
+		wklyData = new ArrayList<>();
 	}
 	
 	/**
@@ -190,13 +264,18 @@ public class FetchData {
 			
 			logger.info("MOVIE ID IS " + movieId);
 			MovieSummary summary = FetchDataDelegates.fetchMovieSummary(movieId);
-			
 			if(summary.getMovieID() != null && summary.getMovieID().length() > 0) {
 				dailyData.addAll(FetchDataDelegates.fetchDailyDataForMovieID(movieId));
 				wkndData.addAll(FetchDataDelegates.fetchWeekendDataForMovieID(movieId));
 				wklyData.addAll(FetchDataDelegates.fetchWeeklyDataForMovieID(movieId));
 				intlData.addAll(FetchDataDelegates.fetchInternationalDataForMovieID(summary.getMovieID(), summary.getReleaseDate()));
 				movieSummary.add(summary);
+				try {
+					if(movieSummary.size() > 100)
+						saveDataToDB();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				/*Movie movie = new Movie(summary, 
 						FetchDataDelegates.fetchDailyDataForMovieID(movieId), 
 						FetchDataDelegates.fetchWeekendDataForMovieID(movieId),
@@ -206,6 +285,13 @@ public class FetchData {
 				movies.add(movie);*/
 			}
 		});
+		
+		// SAVE THE LAST FEW ROWS
+		try {
+			saveDataToDB();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}	
 	
 	/**
@@ -214,6 +300,8 @@ public class FetchData {
 	 */
 	public static void main(String[] args) {
 		try {
+			initHibernate();
+			
 			// STEP 1: Start by generating a link to parse.
 			org.jsoup.nodes.Document doc = org.jsoup.Jsoup.parse(new URL(Constants.baseLink).openStream(), Constants.HTMLEncoding, Constants.baseLink);
 						
@@ -247,7 +335,6 @@ public class FetchData {
 			}
 			
 			getData(doc, rootInBase);
-			saveDataToDB();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

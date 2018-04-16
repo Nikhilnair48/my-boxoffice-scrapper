@@ -166,41 +166,42 @@ public class FetchDataDelegates {
 		// 6 TABLES MAX 
 		org.jsoup.nodes.Document doc = org.jsoup.Jsoup.parse(FetchData.getHTMLFromURL(link).toString());
 		Element bodyElement = doc.getElementById(Constants.rootElementInBaseLink);
-		Element dailyTables = bodyElement.child(1).child(0).child(0).child(0).child(3).child(0).child(0).child(0).child(3);
-		
-		//for(int i = 0; i < dailyTables.childNodes().size()-1; i++) {
-			//dailyTables.childNodes()
-		Node node = dailyTables.child(0);
-		List<Node> monthlyDataRows = dailyTables.child(1).childNodes();
-		
-		for(int i = 0; i < dailyTables.childNodeSize()-1; i++) {		// LOOP THROUGH ALL THE TABLES ON THE PAGE. EXCLUDE THE LAST ELEMENT (IS AND "I" ELEMENT)
-			Element els = dailyTables.child(i);
-			Elements ee = els.getElementsByTag("td");
+		if(bodyElement != null && bodyElement.children().size() > 0) {
 			
-			for(int k = 0; k < ee.size(); k++) {
-				if(ee.get(k).getElementsByTag("center") != null) {
-					//THE LENGTH COULD BE 19, BUT IT'S JUST HEADER INFO -- IGNORE
-					if(ee.get(k) != null && ee.get(k).children().size() > 0 && ee.get(k).children().first().hasAttr("href")) {
-					// dailyDataArray[0].split("\u00A0")[0]
-						DailyData daily = saveDailyData(ee.get(k).text());
-						DailyDataKey key = new DailyDataKey();
-						String linkWithDate = ee.get(k).children().first().attr("href");
-						key.setMovieID(ID);
-						LocalDate date = LocalDate.parse(linkWithDate.substring(linkWithDate.indexOf("=")+1, linkWithDate.indexOf("&")));
-						key.setDate(String.valueOf(date.toEpochDay()));
-						daily.setDailyDataId(key);
-						dailyData.add(daily);
-						//logger.info(daily);
+		
+			Element dailyTables = bodyElement.child(1).child(0).child(0).child(0).child(3).child(0).child(0).child(0).child(3);
+			
+			//for(int i = 0; i < dailyTables.childNodes().size()-1; i++) {
+				//dailyTables.childNodes()
+			Node node = dailyTables.child(0);
+			List<Node> monthlyDataRows = dailyTables.child(1).childNodes();
+			
+			for(int i = 0; i < dailyTables.childNodeSize()-1; i++) {		// LOOP THROUGH ALL THE TABLES ON THE PAGE. EXCLUDE THE LAST ELEMENT (IS AND "I" ELEMENT)
+				Element els = dailyTables.child(i);
+				Elements ee = els.getElementsByTag("td");
+				
+				for(int k = 0; k < ee.size(); k++) {
+					if(ee.get(k).getElementsByTag("center") != null) {
+						//THE LENGTH COULD BE 19, BUT IT'S JUST HEADER INFO -- IGNORE
+						if(ee.get(k) != null && ee.get(k).children().size() > 0 && ee.get(k).children().first().hasAttr("href")) {
+						// dailyDataArray[0].split("\u00A0")[0]
+							DailyData daily = saveDailyData(ee.get(k).text(), ee.get(k).children().first().attr("href"), movieId);
+							
+							//daily.setDate(String.valueOf(date.toEpochDay()));
+							//daily.setDailyDataId(key);
+							dailyData.add(daily);
+							//logger.info(daily);
+						}
 					}
-				}
+				}	
 			}
-			
 		}
+		//System.out.println(dailyData);
 		return dailyData;
 	}
 	
 	// SAMPLE DATA - [11 2 , $9,660,560, -, /, -, 3,535, /, $2,733, $9,660,560, /, 1]
-	public static DailyData saveDailyData(String dailyData) {
+	public static DailyData saveDailyData(String dailyData, String linkWithDate, String movieId) {
 		DailyData daily = new DailyData();
 		String[] dailyDataArray = dailyData.split(" ");
 		
@@ -228,7 +229,18 @@ public class FetchDataDelegates {
 			daily.setAverageGrossOverCycle(dailyDataArray[13]);
 			
 			daily.setGrossToDate(dailyDataArray[14]);
-			daily.setNumDaysInTheater(dailyDataArray[16]);
+			//daily.setNumDaysInTheater(dailyDataArray[16]);
+			
+			/* RECENT ADDITION */
+			DailyDataKey key = new DailyDataKey();
+			//String linkWithDate = ee.get(k).children().first().attr("href");
+			//daily.setMovieID(ID);
+			key.setMovieID(movieId);
+			key.setNumDaysInTheater(dailyDataArray[16]);
+			LocalDate date = LocalDate.parse(linkWithDate.substring(linkWithDate.indexOf("=")+1, linkWithDate.indexOf("&")));
+			daily.setDate(String.valueOf(date.toEpochDay()));
+			//key.setDate(String.valueOf(date.toEpochDay()));
+			daily.setDailyDataId(key);
 			
 		} else if(dailyDataArray.length == 11) {	// PRIMARILY DAILY DATA
 			String[] dateAndRank = dailyDataArray[0].split("\u00A0");
@@ -245,7 +257,18 @@ public class FetchDataDelegates {
 			daily.setAvgPerTheater(dailyDataArray[7]);
 			
 			daily.setGrossToDate(dailyDataArray[8]);
-			daily.setNumDaysInTheater(dailyDataArray[10]);
+			//daily.setNumDaysInTheater(dailyDataArray[10]);
+			
+			/* RECENT ADDITION */
+			DailyDataKey key = new DailyDataKey();
+			//String linkWithDate = ee.get(k).children().first().attr("href");
+			//daily.setMovieID(ID);
+			key.setMovieID(movieId);
+			key.setNumDaysInTheater(dailyDataArray[10]);
+			LocalDate date = LocalDate.parse(linkWithDate.substring(linkWithDate.indexOf("=")+1, linkWithDate.indexOf("&")));
+			daily.setDate(String.valueOf(date.toEpochDay()));
+			//key.setDate(String.valueOf(date.toEpochDay()));
+			daily.setDailyDataId(key);
 		}
 		
 		return daily;
@@ -288,6 +311,8 @@ public class FetchDataDelegates {
 						if(columnMap.containsKey("Country (click to view weekend breakdown)") 
 							&& currentCountry.size() >= columnMap.get("Country (click to view weekend breakdown)")+1) {
 							countryData.setFDKey(new ForeignDataKey(movieId, currentCountry.get(columnMap.get("Country (click to view weekend breakdown)")).text()));
+							//countryData.setForeignKeyMovieID(movieId);
+							//countryData.setCountry(currentCountry.get(columnMap.get("Country (click to view weekend breakdown)")).text());
 						}
 								
 						if(columnMap.containsKey("Dist.")
@@ -391,7 +416,9 @@ public class FetchDataDelegates {
 							.withYear(Integer.parseInt(year))
 							.with(weekFields.weekOfYear(), Integer.parseInt(sWeekNumber));
 	
-					wkndData.setWkndDataKey(new WeekendDataKey(movieId, lDate.toEpochDay()));
+					wkndData.setWkndDataKey(new WeekendDataKey(movieId, weekendTr.get(7).text()));
+					//wkndData.setMovieId(movieId);
+					wkndData.setWeekendStart(lDate.toEpochDay());
 					wkndData.setWeekendEnd(determindWeekendEndDate(weekendDates, year).toEpochDay());
 					wkndData.setWeekendRank(weekendTr.get(1).text());
 					wkndData.setWeekendGross(weekendTr.get(2).text());
@@ -399,7 +426,7 @@ public class FetchDataDelegates {
 					wkndData.setNumTheatersForWeekend(weekendTr.get(4).text());
 					wkndData.setPercentChangeInTheatersFromPrevWknd(weekendTr.get(5).text());
 					wkndData.setPerTheaterAvgForWknd(weekendTr.get(6).text());
-					wkndData.setGrossToDate(weekendTr.get(7).text());
+					//wkndData.setGrossToDate(weekendTr.get(7).text());
 					wkndData.setWeeksInRelease(weekendTr.get(8).text());
 					
 					weekendData.add(wkndData);
@@ -447,7 +474,9 @@ public class FetchDataDelegates {
 							.withYear(Integer.parseInt(year))
 							.with(weekFields.weekOfYear(), Integer.parseInt(sWeekNumber));
 	
-					wkData.setWeekDataKey(new WeeklyDataKey(movieId, lDate.toEpochDay()));
+					wkData.setWeekDataKey(new WeeklyDataKey(movieId, weekendTr.get(7).text()));
+					//wkData.setMovieId(movieId);
+					wkData.setWeekStart(lDate.toEpochDay());
 					wkData.setWeekEnd(determindWeekendEndDate(weekendDates, year).toEpochDay());
 					wkData.setWeekRank(weekendTr.get(1).text());
 					wkData.setWeekGross(weekendTr.get(2).text());
@@ -455,7 +484,7 @@ public class FetchDataDelegates {
 					wkData.setNumTheatersForWeek(weekendTr.get(4).text());
 					wkData.setPercentChangeInTheatersFromPrevWeek(weekendTr.get(5).text());
 					wkData.setPerTheaterAvgForWeek(weekendTr.get(6).text());
-					wkData.setGrossToDate(weekendTr.get(7).text());
+					//wkData.setGrossToDate(weekendTr.get(7).text());
 					wkData.setWeeksInRelease(weekendTr.get(8).text());
 					
 					weeklyData.add(wkData);

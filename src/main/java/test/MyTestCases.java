@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import com.sun.media.jfxmedia.logging.Logger;
 
+import beans.DailyData;
 import beans.ForeignData;
 import beans.MovieSummary;
 import beans.WeekendData;
@@ -60,9 +61,9 @@ public class MyTestCases {
 		
 	}
 	
-	//@Test
+	@Test
 	public void testFetchWeekendData() {
-		String movieId = "/movies/?page=intl&id=rrrrrrr.htm";	//rrrrrrr
+		String movieId = "/movies/?page=weekend&id=afterhours.htm";	//rrrrrrr
 		MovieSummary summary = FetchDataDelegates.fetchMovieSummary(movieId);
 		System.out.println(summary);
 		ArrayList<WeekendData> data = FetchDataDelegates.fetchWeekendDataForMovieID(movieId);	//new Long(1091160000L)
@@ -82,6 +83,15 @@ public class MyTestCases {
 	public void testLocalDateParseFunction() {
 		LocalDate date = LocalDate.parse("2011-09-09", DateTimeFormatter.ISO_LOCAL_DATE);
 		System.out.println(date);
+	}
+	
+	//@Test
+	public void testFetchDailyData() {
+		String movieId = "/movies/?id=3:10toyuma57.htm";	//rrrrrrr
+		MovieSummary summary = FetchDataDelegates.fetchMovieSummary(movieId);
+		System.out.println(summary);
+		ArrayList<DailyData> data = FetchDataDelegates.fetchDailyDataForMovieID(movieId);	//new Long(1091160000L)
+		System.out.println(data);
 	}
 	
 	//@Test

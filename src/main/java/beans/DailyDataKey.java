@@ -3,19 +3,21 @@ package beans;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class DailyDataKey {
+public class DailyDataKey implements java.io.Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private String movieID;
-	private String date;		// STORE THE DATE AS TIME FROM 1970 (LONG)
+	private String numDaysInTheater;
 	
 	public DailyDataKey() {
-		movieID = "";
+		numDaysInTheater = movieID = "";
 	}
-	
-	public DailyDataKey(String movieID, String date) {
+
+	public DailyDataKey(String movieID, String numDaysInTheater) {
 		super();
 		this.movieID = movieID;
-		this.date = date;
+		this.numDaysInTheater = numDaysInTheater;
 	}
 
 	public String getMovieID() {
@@ -26,17 +28,21 @@ public class DailyDataKey {
 		this.movieID = movieID;
 	}
 
-	public String getDate() {
-		return date;
+	public String getNumDaysInTheater() {
+		return numDaysInTheater;
 	}
 
-	public void setDate(String date) {
-		this.date = date;
+	public void setNumDaysInTheater(String numDaysInTheater) {
+		this.numDaysInTheater = numDaysInTheater;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	@Override
 	public String toString() {
-		return "DailyDataKey [movieID=" + movieID + ", Date=" + date + "]";
+		return "DailyDataKey [movieID=" + movieID + ", numDaysInTheater="
+				+ numDaysInTheater + "]";
 	}
-
 }

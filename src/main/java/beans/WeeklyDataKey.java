@@ -5,37 +5,47 @@ import java.sql.Date;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class WeeklyDataKey {
+public class WeeklyDataKey implements java.io.Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private String movieId;
-	private Long weekStart;
+	private String grossToDate;
 	
 	public WeeklyDataKey() {
-		movieId = "";
+		grossToDate = movieId = "";
 	}
-	
-	public WeeklyDataKey(String movieId, Long weekStart) {
+
+	public WeeklyDataKey(String movieId, String grossToDate) {
 		super();
 		this.movieId = movieId;
-		this.weekStart = weekStart;
+		this.grossToDate = grossToDate;
 	}
+
 	public String getMovieId() {
 		return movieId;
 	}
+
 	public void setMovieId(String movieId) {
 		this.movieId = movieId;
 	}
-	public Long getWeekStart() {
-		return weekStart;
+
+	public String getGrossToDate() {
+		return grossToDate;
 	}
-	public void setWeekStart(Long weekStart) {
-		this.weekStart = weekStart;
+
+	public void setGrossToDate(String grossToDate) {
+		this.grossToDate = grossToDate;
 	}
-	
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	@Override
 	public String toString() {
-		return "WeeklyDataKey [movieId=" + movieId + ", weekStart=" + weekStart
-				+ "]";
+		return "WeeklyDataKey [movieId=" + movieId + ", grossToDate="
+				+ grossToDate + "]";
 	}
 	
 }

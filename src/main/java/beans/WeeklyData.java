@@ -5,6 +5,7 @@ import java.sql.Date;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Entity
 public class WeeklyData implements Serializable {
@@ -13,6 +14,9 @@ public class WeeklyData implements Serializable {
 	
 	@EmbeddedId
 	private WeeklyDataKey weekDataKey;
+	//@Id
+	//private String movieId;
+	private Long weekStart;
 	private Long weekEnd;
 	private String weekRank;
 	private String weekGross;
@@ -20,30 +24,30 @@ public class WeeklyData implements Serializable {
 	private String numTheatersForWeek;
 	private String percentChangeInTheatersFromPrevWeek;
 	private String perTheaterAvgForWeek;
-	private String grossToDate;
+	//private String grossToDate;
 	private String weeksInRelease;
 	
 	public WeeklyData() {
-		this.weekDataKey = new WeeklyDataKey();
-		//this.weekEnd = weekEnd;
+		//this.weekDataKey = new WeeklyDataKey();
+		//this.movieId = "";
 		this.weekRank = "";
 		this.weekGross = "";
 		this.percentChangeFromFromPrevWeek = "";
 		this.numTheatersForWeek = "";
 		this.percentChangeInTheatersFromPrevWeek = "";
 		this.perTheaterAvgForWeek = "";
-		this.grossToDate = "";
+		//this.grossToDate = "";
 		this.weeksInRelease = "";
 	}
-	
-	public WeeklyData(WeeklyDataKey wkndDataKey, Long weekEnd, String weekRank,
-			String weekGross, String percentChangeFromFromPrevWeek,
-			String numTheatersForWeek,
+
+	public WeeklyData(WeeklyDataKey weekDataKey, Long weekStart, Long weekEnd,
+			String weekRank, String weekGross,
+			String percentChangeFromFromPrevWeek, String numTheatersForWeek,
 			String percentChangeInTheatersFromPrevWeek,
-			String perTheaterAvgForWeek, String grossToDate,
-			String weeksInRelease) {
+			String perTheaterAvgForWeek, String weeksInRelease) {
 		super();
-		this.weekDataKey = wkndDataKey;
+		this.weekDataKey = weekDataKey;
+		this.weekStart = weekStart;
 		this.weekEnd = weekEnd;
 		this.weekRank = weekRank;
 		this.weekGross = weekGross;
@@ -51,7 +55,6 @@ public class WeeklyData implements Serializable {
 		this.numTheatersForWeek = numTheatersForWeek;
 		this.percentChangeInTheatersFromPrevWeek = percentChangeInTheatersFromPrevWeek;
 		this.perTheaterAvgForWeek = perTheaterAvgForWeek;
-		this.grossToDate = grossToDate;
 		this.weeksInRelease = weeksInRelease;
 	}
 
@@ -61,6 +64,14 @@ public class WeeklyData implements Serializable {
 
 	public void setWeekDataKey(WeeklyDataKey weekDataKey) {
 		this.weekDataKey = weekDataKey;
+	}
+
+	public Long getWeekStart() {
+		return weekStart;
+	}
+
+	public void setWeekStart(Long weekStart) {
+		this.weekStart = weekStart;
 	}
 
 	public Long getWeekEnd() {
@@ -121,14 +132,6 @@ public class WeeklyData implements Serializable {
 		this.perTheaterAvgForWeek = perTheaterAvgForWeek;
 	}
 
-	public String getGrossToDate() {
-		return grossToDate;
-	}
-
-	public void setGrossToDate(String grossToDate) {
-		this.grossToDate = grossToDate;
-	}
-
 	public String getWeeksInRelease() {
 		return weeksInRelease;
 	}
@@ -137,16 +140,20 @@ public class WeeklyData implements Serializable {
 		this.weeksInRelease = weeksInRelease;
 	}
 
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	@Override
 	public String toString() {
-		return "WeeklyData [weekDataKey=" + weekDataKey + ", weekEnd="
-				+ weekEnd + ", weekRank=" + weekRank + ", weekGross="
-				+ weekGross + ", percentChangeFromFromPrevWeek="
+		return "WeeklyData [weekDataKey=" + weekDataKey + ", weekStart="
+				+ weekStart + ", weekEnd=" + weekEnd + ", weekRank=" + weekRank
+				+ ", weekGross=" + weekGross
+				+ ", percentChangeFromFromPrevWeek="
 				+ percentChangeFromFromPrevWeek + ", numTheatersForWeek="
 				+ numTheatersForWeek + ", percentChangeInTheatersFromPrevWeek="
 				+ percentChangeInTheatersFromPrevWeek
 				+ ", perTheaterAvgForWeek=" + perTheaterAvgForWeek
-				+ ", grossToDate=" + grossToDate + ", weeksInRelease="
-				+ weeksInRelease + "]";
-	}	
+				+ ", weeksInRelease=" + weeksInRelease + "]";
+	}
 }

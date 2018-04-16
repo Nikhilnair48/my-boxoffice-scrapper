@@ -1,23 +1,23 @@
 package beans;
 
-import java.sql.Date;
-
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class WeekendDataKey {
+public class WeekendDataKey implements java.io.Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private String movieId;
-	private Long weekendStart;
+	private String grossToDate;
 	
 	public WeekendDataKey() {
 		movieId = "";
 	}
 	
-	public WeekendDataKey(String movieId, Long weekendStart) {
+	public WeekendDataKey(String movieId, String grossToDate) {
 		super();
 		this.movieId = movieId;
-		this.weekendStart = weekendStart;
+		this.grossToDate = grossToDate;
 	}
 
 	public String getMovieId() {
@@ -28,18 +28,22 @@ public class WeekendDataKey {
 		this.movieId = movieId;
 	}
 
-	public Long getWeekendStart() {
-		return weekendStart;
+	public String getGrossToDate() {
+		return grossToDate;
 	}
 
-	public void setWeekendStart(Long weekendStart) {
-		this.weekendStart = weekendStart;
+	public void setGrossToDate(String grossToDate) {
+		this.grossToDate = grossToDate;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	@Override
 	public String toString() {
-		return "WeekendDataKey [movieId=" + movieId + ", weekendStart="
-				+ weekendStart + "]";
+		return "WeekendDataKey [movieId=" + movieId + ", grossToDate="
+				+ grossToDate + "]";
 	}
-	
+
 }
